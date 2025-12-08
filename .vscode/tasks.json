@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Train CNN",
+      "type": "shell",
+      "command": "source tf_env/bin/activate && python src/train_cnn.py",
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}
