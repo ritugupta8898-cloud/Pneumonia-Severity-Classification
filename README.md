@@ -1,35 +1,91 @@
 # Pneumonia X-Ray Classification (CNN)
 
-This project classifies Chest X-Rays into:
+This project classifies chest X-rays into:
 
-0 → NORMAL
-1 → PNEUMONIA
+- **0 → NORMAL**
+- **1 → PNEUMONIA**
 
-The final CNN model was trained from scratch using TensorFlow/Keras, and improved through architecture tuning, class balancing, and most importantly data augmentation, which significantly boosted recall balance and overall performance.
+The final CNN model was trained from scratch using TensorFlow/Keras and improved through
+architecture tuning, class balancing, and data augmentation, which significantly improved
+recall balance and overall performance.
 
-------------------------------------------------------------
-📂 Project Structure
-------------------------------------------------------------
+---
 
+## Tech Stack
+- Python 3.11
+- TensorFlow (tensorflow-macos, tensorflow-metal)
+- NumPy (< 2.0)
+- OpenCV
+- FastAPI
+- Uvicorn
+
+---
+
+## Project Structure
+
+```
 Pneumonia-Severity-Classification/
-│── data/
+├── api/
+│   ├── app.py          # FastAPI inference service
+│   └── main.py         # CLI inference script
+├── data/
 │   ├── raw/
-│   ├── processed/
-│
-│── src/
+│   └── processed/
+├── src/
 │   ├── preprocess.py
 │   ├── train_cnn.py
-│   ├── evaluate.py
-│
-│── models/
-│   ├── cnn_pneumonia.h5     ← final trained model
-│
+│   └── evaluate.py
+├── models/
+│   └── cnn_pneumonia.h5
 └── README.md
+```
 
-------------------------------------------------------------
-🧠 Model Architecture
-------------------------------------------------------------
+---
 
+## Setup Instructions
+
+### 1. Create and activate virtual environment
+```
+python3.11 -m venv tf_env
+source tf_env/bin/activate
+```
+
+### 2. Install dependencies
+```
+pip install -r requirements.txt
+```
+
+---
+
+## Run Inference (CLI)
+```
+python api/main.py /path/to/xray_image.jpeg
+```
+
+---
+
+## Run FastAPI Server
+```
+uvicorn api.app:app --reload
+```
+
+Open in browser:
+```
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## Notes
+- Inference preprocessing matches training preprocessing
+- Model is loaded once at API startup
+- Focus is on end-to-end ML deployment
+
+---
+
+## Model Architecture
+
+```python
 data_augmentation = tf.keras.Sequential([
     layers.RandomFlip("horizontal"),
     layers.RandomRotation(0.15),
@@ -39,13 +95,13 @@ data_augmentation = tf.keras.Sequential([
 
 model = Sequential([
     data_augmentation,
-    layers.Conv2D(32,3,activation='relu',padding='same',input_shape=(128,128,3)),
+    layers.Conv2D(32, 3, activation='relu', padding='same', input_shape=(128,128,3)),
     layers.MaxPooling2D(),
 
-    layers.Conv2D(64,3,activation='relu',padding='same'),
+    layers.Conv2D(64, 3, activation='relu', padding='same'),
     layers.MaxPooling2D(),
 
-    layers.Conv2D(128,3,activation='relu',padding='same'),
+    layers.Conv2D(128, 3, activation='relu', padding='same'),
     layers.MaxPooling2D(),
 
     layers.Flatten(),
@@ -53,42 +109,40 @@ model = Sequential([
     layers.Dropout(0.3),
     layers.Dense(1, activation='sigmoid')
 ])
+```
 
-Loss Function  : Binary Cross-Entropy
-Optimizer      : Adam
-Metrics        : Accuracy, Precision, Recall
+**Loss Function**: Binary Cross-Entropy  
+**Optimizer**: Adam  
+**Metrics**: Accuracy, Precision, Recall  
 
-------------------------------------------------------------
-📊 Results (Best Run)
-------------------------------------------------------------
+---
 
-Accuracy       : 0.90
-Normal Recall  : 0.86
-Pneumonia Recall : 0.92
+## Results (Best Run)
 
-Confusion Matrix:
+- **Accuracy**: 0.90  
+- **Normal Recall**: 0.86  
+- **Pneumonia Recall**: 0.92  
+
+**Confusion Matrix**
+```
 [[202  32]
  [ 32 358]]
+```
 
-Balanced performance — high pneumonia sensitivity while still detecting normals reliably.
+Balanced performance with high pneumonia sensitivity while still detecting normals reliably.
 
-------------------------------------------------------------
-🔥 Key Learnings
-------------------------------------------------------------
+---
 
-• Augmentation was the main performance booster  
-• Balanced recall > raw accuracy for medical use  
-• Simple models generalize better than deeper ones  
-• Reduced pneumonia dominance → restored fairness
+## Key Learnings
+- Augmentation was the primary performance booster
+- Balanced recall is more important than raw accuracy in medical tasks
+- Simpler CNNs generalized better than deeper variants
+- Reducing class dominance improved fairness
 
-------------------------------------------------------------
-🚀 Future Improvements
-------------------------------------------------------------
+---
 
-• Add early stopping + LR scheduler  
-• Transfer Learning (ResNet50, EfficientNet) to push accuracy further  
-• Mixup/augmentation tuning for even more robustness  
-• Class-weight tuning to match recalls perfectly
-
-------------------------------------------------------------
-
+## Future Improvements
+- Early stopping and learning-rate scheduling
+- Transfer learning (ResNet50, EfficientNet)
+- Augmentation and MixUp tuning
+- Class-weight optimization for recall parity
