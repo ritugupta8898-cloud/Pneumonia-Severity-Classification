@@ -42,3 +42,4 @@ for f, content in files.items():
     print(f"[FILE] {f}")
 
 print("\nProject structure created successfully.")
+

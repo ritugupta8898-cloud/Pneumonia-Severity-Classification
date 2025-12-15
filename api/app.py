@@ -37,3 +37,4 @@ async def predict(file: UploadFile = File(...)):
         "confidence": round(confidence, 4),
         "p_pneumonia": round(prob, 4)
     }
+
